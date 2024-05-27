@@ -213,7 +213,7 @@ form#sheet
         .tag
           width: 30%
         .unit
-          min-width: 45px
+          min-width: 40px
         tr.small-header
           td
             vertical-align: bottom
