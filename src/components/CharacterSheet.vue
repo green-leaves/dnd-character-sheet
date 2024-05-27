@@ -94,21 +94,19 @@
       </section>
       <section id="hp">
         <table id="ac">
-          <thead>
-            <tr>
-              <td><span>&nbsp;<br><br></span></td>
-              <td><span>TOTAL</span></td>
-              <td colspan="3"></td>
-              <td>Armor</td><td></td>
-              <td>Shield</td><td></td>
-              <td>Dex</td><td></td>
-              <td>Size</td><td></td>
-              <td>Natural</td><td></td>
-              <td>Misc</td>
-            </tr>
-          </thead>
+          <tr class="small-header">
+            <td><span>&nbsp;<br><br></span></td>
+            <td><span>TOTAL</span></td>
+            <td colspan="3"></td>
+            <td class="unit">Armor</td><td></td>
+            <td class="unit">Shield</td><td></td>
+            <td class="unit">Dex</td><td></td>
+            <td class="unit">Size</td><td></td>
+            <td class="unit">Natural</td><td></td>
+            <td class="unit">Misc</td>
+          </tr>
           <tr>
-            <td class="tag unit round-header"><span>AC</span></td>
+            <td class="tag round-header"><span>AC</span></td>
             <td class="unit"><input type="text"></td>
             <td class="char"><span>=</span></td>
             <td class="char"><span>10</span></td>
@@ -117,6 +115,29 @@
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
+            <td class="unit"><input type="text"></td><td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag unit"><span>Flat-Footed</span></td>
+            <td class="unit" colspan="4"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag unit"><span>Touch</span></td>
+            <td class="unit" colspan="4"><input type="text"></td>
+          </tr>
+          <tr class="small-header">
+            <td><span>&nbsp;</span></td>
+            <td><span>TOTAL</span></td>
+            <td class="char"></td>
+            <td class="unit">Dex</td>
+            <td></td>
+            <td class="unit">Misc</td>
+          </tr>
+          <tr>
+            <td class="tag round-header"><span>INIT</span></td>
+            <td class="unit"><input type="text"></td>
+            <td class="char"><span>=</span></td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td>
           </tr>
@@ -130,7 +151,7 @@ $sheet-width: 1000px
 $bg: white
 $faded: #ddd
 $faded-light: #eee
-$faded-dark: #bbb
+$faded-dark: #2d2d2d
 $radius: 10px
 $gutter: 10px
 $bubble-size: 10px
@@ -162,7 +183,7 @@ form#sheet
     justify-content: space-between
     margin-top: $gutter*2
     .tag
-      background-color: black
+      background-color: $faded-dark
       color: white
       text-align: center
       font-weight: bold
@@ -181,18 +202,22 @@ form#sheet
             text-align: center
             padding: 6px
     section#hp
-      padding-left: 50px
+      margin-top: 13px
+      padding-left: 10px
       width: 60%
       table#ac
         width: 100%
         border-collapse: separate
         .char
           width: 1em
+        .tag
+          width: 30%
         .unit
-          width: 10%
-        thead
+          min-width: 45px
+        tr.small-header
           td
             vertical-align: bottom
+            font-size: 12px
         td
           input[type="text"]
             width: 100%
