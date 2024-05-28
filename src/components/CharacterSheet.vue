@@ -72,7 +72,7 @@
       <section id="stats">
         <table id="abilities">
           <thead>
-          <tr>
+          <tr class="small-header">
             <td></td>
             <td>Ability Score</td>
             <td>Ability Modifier</td>
@@ -121,10 +121,18 @@
           <tr>
             <td class="tag unit"><span>Flat-Footed</span></td>
             <td class="unit" colspan="4"><input type="text"></td>
+            <td></td>
+            <td></td>
+            <td class="tag unit round-header" colspan="3">XP</td>
+            <td class="unit" colspan="6"><input type="text"></td>
           </tr>
           <tr>
             <td class="tag unit"><span>Touch</span></td>
             <td class="unit" colspan="4"><input type="text"></td>
+            <td></td>
+            <td></td>
+            <td class="tag unit" colspan="3">Next Level</td>
+            <td class="unit" colspan="6"><input type="text"></td>
           </tr>
           <tr class="small-header">
             <td><span>&nbsp;</span></td>
@@ -140,6 +148,20 @@
             <td class="char"><span>=</span></td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag"><span>Speed</span></td>
+            <td colspan="5" class="unit"><input type="text"></td>
+            <td></td>
+            <td class="tag unit round-header" colspan="3">HP</td>
+            <td class="unit" colspan="6"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag"><span>Action</span></td>
+            <td colspan="5" class="unit"><input type="text"></td>
+            <td></td>
+            <td class="tag unit" colspan="3">CHP</td>
+            <td class="unit" colspan="6"><input type="text"></td>
           </tr>
         </table>
       </section>
@@ -194,15 +216,24 @@ form#sheet
       table#abilities
         width: 100%
         border-collapse: separate
+        tr.small-header
+          td
+            vertical-align: bottom
+            font-size: 12px
+            border: none
         td
           width: 20%
+          padding: 0
+          border: 1px solid $faded-dark
           input[type="text"]
             width: 100%
+            height: 100%
+            border: none
             box-sizing: border-box
             text-align: center
             padding: 6px
     section#hp
-      margin-top: 13px
+      margin-top: 10px
       padding-left: 10px
       width: 60%
       table#ac
@@ -211,9 +242,10 @@ form#sheet
         .char
           width: 1em
         .tag
-          width: 30%
+          width: 20%
         .unit
           min-width: 40px
+          width: 40px
         tr.small-header
           td
             vertical-align: bottom
@@ -224,4 +256,5 @@ form#sheet
             box-sizing: border-box
             text-align: center
             padding: 6px
+            border: 1px solid $faded-dark
 </style>
