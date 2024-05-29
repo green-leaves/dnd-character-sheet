@@ -71,7 +71,6 @@
     <main>
       <section id="stats">
         <table id="abilities">
-          <thead>
           <tr class="small-header">
             <td></td>
             <td>Ability Score</td>
@@ -89,7 +88,6 @@
             <td><input type="text" name="Str" title="Str" class="mod"></td>
             <td><input type="text" name="Str" title="Str" class="mod"></td>
           </tr>
-          </thead>
         </table>
       </section>
       <section id="hp">
@@ -162,6 +160,72 @@
             <td></td>
             <td class="tag unit" colspan="3">CHP</td>
             <td class="unit" colspan="6"><input type="text"></td>
+          </tr>
+        </table>
+      </section>
+    </main>
+    <main>
+      <section id="saves">
+        <table class="saves">
+          <tr class="small-header">
+            <td>Saving Throws</td>
+            <td>Total</td><td></td>
+            <td>Base Save</td><td></td>
+            <td>Ability Modifier</td><td></td>
+            <td>Magic Modifier</td><td></td>
+            <td>Misc Modifier</td><td></td>
+            <td>Temp Modifier</td>
+          </tr>
+          <tr>
+            <td class="tag round-header">
+              <span class="rotate-tag">CON</span>
+              <span>Fortitude</span>
+            </td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">=</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag">
+              <span class="rotate-tag">DEX</span>
+              <span>Reflex</span>
+            </td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">=</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag">
+              <span class="rotate-tag">WIS</span>
+              <span>WillPower</span>
+            </td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">=</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
           </tr>
         </table>
       </section>
@@ -257,4 +321,34 @@ form#sheet
             text-align: center
             padding: 6px
             border: 1px solid $faded-dark
+    section#saves
+      width: 60%
+      table.saves
+        .rotate-tag
+          display: inline-block
+          float: left
+          transform: rotate(-90deg)
+          margin-top: 3px
+          font-size: 8px
+        .tag
+          width: 200px
+          font-size: 12px
+          padding-right: 4px
+        .unit
+          width: 12%
+        .char
+          width: 1em
+        border-collapse: separate
+        tr.small-header
+          td
+            vertical-align: bottom
+            font-size: 12px
+            border: none
+        td
+          input[type="text"]
+            width: 100%
+            height: 100%
+            box-sizing: border-box
+            text-align: center
+            padding: 6px
 </style>
