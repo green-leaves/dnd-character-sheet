@@ -1,18 +1,99 @@
 <script setup>
-  const abilities = [
+  import { ref, reactive, computed } from 'vue';
+  const abilityList = [
     {key: 'str', value: 'strength'},
     {key: 'dex', value: 'dexterity'},
     {key: 'con', value: 'constitution'},
     {key: 'int', value: 'intelligence'},
     {key: 'wis', value: 'wisdom'},
     {key: 'cha', value: 'charisma'}
-  ]
+  ];
+
+
+  const data = reactive({
+    abilities: {
+      str: {
+        score: '',
+        mod: '',
+      },
+      dex: {
+        score: '',
+        mod: '',
+      },
+      con: {
+        score: '',
+        mod: '',
+      },
+      int: {
+        score: '',
+        mod: '',
+      },
+      wis: {
+        score: '',
+        mod: '',
+      },
+      cha: {
+        score: '',
+        mod: '',
+      },
+    }
+  });
+
+
+  const calculateMod = (score) => {
+    if (score === '') return '';
+    return Math.floor((score - 10) / 2);
+  };
+
+  const computedMod = (abilityKey) => {
+    return calculateMod(data.abilities[abilityKey].score);
+  };
+
+  for (const ability of abilityList) {
+    data.abilities[ability.key].mod = computed(() => computedMod(ability.key));
+  }
+
+  const exportData = () => {
+    const abilitiesJson = JSON.stringify(data, null, 2);
+    const blob = new Blob([abilitiesJson], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'abilities.json';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const importData = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        console.log(importedData);
+        for (const key in importedData) {
+          if (data.hasOwnProperty(key)) {
+            data[key] = importedData[key];
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing JSON file:', error);
+      }
+    };
+    reader.readAsText(file);
+  };
 
 
 </script>
 
 <template>
   <form id="sheet">
+    <section style="text-align: right">
+      <button style="color: white; padding: 10px" @click="exportData">Export</button>
+      <input style="margin-left: 20px" type="file" @change="importData" accept=".json">
+    </section>
     <header>
       <section id="character">
         <table id="info">
@@ -78,15 +159,15 @@
             <td>Temporary Score</td>
             <td>Temporary Modifier</td>
           </tr>
-          <tr v-for="ability in abilities" :key="ability.key">
+          <tr v-for="ability in abilityList" :key="ability.key">
             <td class="tag"
                 :class="{'round-header': ability.key === 'str'}">
               <span>{{ ability.key }}</span>
             </td>
-            <td><input type="text" name="{{ability.key}}" title="{{ability.key}}" class="mod"></td>
-            <td><input type="text" name="Str" title="Str" class="mod"></td>
-            <td><input type="text" name="Str" title="Str" class="mod"></td>
-            <td><input type="text" name="Str" title="Str" class="mod"></td>
+            <td><input type="text" v-model.number="data.abilities[ability.key].score" :name="ability.key" :title="ability.key" class="mod"></td>
+            <td><input readonly type="text" :value="data.abilities[ability.key].mod" :name="ability.key + 'Mod'" :title="ability.key + 'Mod'" class="mod"></td>
+            <td><input type="text" :name="ability.key + 'Temp'" :title="ability.key + 'Temp'" class="mod"></td>
+            <td><input type="text" :name="ability.key + 'TempMod'" :title="ability.key + 'TempMod'" class="mod"></td>
           </tr>
         </table>
       </section>
@@ -165,8 +246,8 @@
       </section>
     </main>
     <main>
-      <section id="saves">
-        <table class="saves">
+      <section id="saves-attack">
+        <table class="saves-and-attack">
           <tr class="small-header">
             <td>Saving Throws</td>
             <td>Total</td><td></td>
@@ -228,6 +309,67 @@
             <td class="unit"><input type="text"></td>
           </tr>
         </table>
+        <table class="saves-and-attack">
+          <tr class="small-header">
+            <td>Attack Bonus</td>
+            <td>Total</td><td></td>
+            <td>Base Attack Bonus</td><td></td>
+            <td>Ability Modifier</td><td></td>
+            <td>Magic Modifier</td><td></td>
+            <td>Misc Modifier</td><td></td>
+            <td>Temp Modifier</td>
+          </tr>
+          <tr>
+            <td class="tag round-header">
+              <span class="rotate-tag">STR</span>
+              <span>Melee</span>
+            </td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">=</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag">
+              <span class="rotate-tag">DEX</span>
+              <span>Range</span>
+            </td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">=</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+        </table>
+      </section>
+      <section id="languages-gold">
+        <table>
+          <tr>
+            <td>Languages</td>
+            <td>Gold/Valuables</td>
+          </tr>
+          <tr v-for="row in 8" :key="row">
+            <td>
+              <input type="text" />
+            </td>
+            <td>
+              <input type="text" />
+            </td>
+          </tr>
+        </table>
       </section>
     </main>
   </form>
@@ -247,6 +389,17 @@ form#sheet
   width: $sheet-width
   .round-header
     border-radius: 10px 10px 0 0
+  input[type="file"]::file-selector-button
+    border-radius: 8px
+    border: 1px solid transparent
+    padding: 11px
+    font-size: 1em
+    font-weight: 500
+    font-family: inherit
+    background-color: #1a1a1a
+    cursor: pointer
+    color: white
+    transition: border-color 0.25s
   header
     section#character
       table#info
@@ -296,6 +449,7 @@ form#sheet
             box-sizing: border-box
             text-align: center
             padding: 6px
+            outline: none
     section#hp
       margin-top: 10px
       padding-left: 10px
@@ -321,9 +475,9 @@ form#sheet
             text-align: center
             padding: 6px
             border: 1px solid $faded-dark
-    section#saves
+    section#saves-attack
       width: 60%
-      table.saves
+      table.saves-and-attack
         .rotate-tag
           display: inline-block
           float: left
@@ -351,4 +505,20 @@ form#sheet
             box-sizing: border-box
             text-align: center
             padding: 6px
+    section#languages-gold
+      width: 40%
+      .tag
+        background-color: $faded-dark
+        color: white
+        text-align: center
+        font-weight: bold
+        text-transform: uppercase
+      table
+        width: 100%
+        td
+          input
+            border-style: none
+            border-top: 1px solid white
+            border-bottom: 1px solid black
+            outline: none
 </style>
