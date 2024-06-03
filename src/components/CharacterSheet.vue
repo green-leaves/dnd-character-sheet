@@ -1,5 +1,6 @@
 <script setup>
   import { ref, reactive, computed } from 'vue';
+  import characterData from './CharacterData.js'
   const abilityList = [
     {key: 'str', value: 'strength'},
     {key: 'dex', value: 'dexterity'},
@@ -9,48 +10,24 @@
     {key: 'cha', value: 'charisma'}
   ];
 
-
-  const data = reactive({
-    abilities: {
-      str: {
-        score: '',
-        mod: '',
-      },
-      dex: {
-        score: '',
-        mod: '',
-      },
-      con: {
-        score: '',
-        mod: '',
-      },
-      int: {
-        score: '',
-        mod: '',
-      },
-      wis: {
-        score: '',
-        mod: '',
-      },
-      cha: {
-        score: '',
-        mod: '',
-      },
-    }
-  });
-
-
   const calculateMod = (score) => {
     if (score === '') return '';
     return Math.floor((score - 10) / 2);
   };
 
-  const computedMod = (abilityKey) => {
+  const computeMod = (abilityKey) => {
     return calculateMod(data.abilities[abilityKey].score);
   };
 
-  for (const ability of abilityList) {
-    data.abilities[ability.key].mod = computed(() => computedMod(ability.key));
+  const computedTempMod = (abilityKey) => {
+    return calculateMod(data.abilities[abilityKey].tempScore);
+  };
+
+  const computeData = () => {
+    for (const ability of abilityList) {
+      data.abilities[ability.key].mod = computed(() => computeMod(ability.key));
+      data.abilities[ability.key].tempMod = computed(() => computedTempMod(ability.key));
+    }
   }
 
   const exportData = () => {
@@ -61,7 +38,6 @@
     a.href = url;
     a.download = 'abilities.json';
     a.click();
-    window.URL.revokeObjectURL(url);
   };
 
   const importData = (event) => {
@@ -78,6 +54,7 @@
             data[key] = importedData[key];
           }
         }
+        computeData();
       } catch (error) {
         console.error('Error parsing JSON file:', error);
       }
@@ -85,6 +62,8 @@
     reader.readAsText(file);
   };
 
+  const data = reactive(characterData);
+  computeData();
 
 </script>
 
@@ -165,9 +144,9 @@
               <span>{{ ability.key }}</span>
             </td>
             <td><input type="text" v-model.number="data.abilities[ability.key].score" :name="ability.key" :title="ability.key" class="mod"></td>
-            <td><input readonly type="text" :value="data.abilities[ability.key].mod" :name="ability.key + 'Mod'" :title="ability.key + 'Mod'" class="mod"></td>
-            <td><input type="text" :name="ability.key + 'Temp'" :title="ability.key + 'Temp'" class="mod"></td>
-            <td><input type="text" :name="ability.key + 'TempMod'" :title="ability.key + 'TempMod'" class="mod"></td>
+            <td class="readonly"><input readonly type="text" :value="data.abilities[ability.key].mod" :name="ability.key + 'Mod'" :title="ability.key + 'Mod'" class="mod"></td>
+            <td><input type="text" v-model.number="data.abilities[ability.key].tempScore" :name="ability.key + 'Temp'"  :title="ability.key + 'Temp'" class="mod"></td>
+            <td class="readonly"><input readonly type="text" :value="data.abilities[ability.key].tempMod" :name="ability.key + 'TempMod'" :title="ability.key + 'TempMod'" class="mod"></td>
           </tr>
         </table>
       </section>
@@ -192,7 +171,8 @@
             <td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
+            <td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td><td class="char">+</td>
             <td class="unit"><input type="text"></td>
@@ -225,7 +205,8 @@
             <td class="tag round-header"><span>INIT</span></td>
             <td class="unit"><input type="text"></td>
             <td class="char"><span>=</span></td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
+            <td class="char">+</td>
             <td class="unit"><input type="text"></td>
           </tr>
           <tr>
@@ -266,7 +247,7 @@
             <td class="char">=</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.con.mod"></td>
             <td class="char">+</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
@@ -283,7 +264,7 @@
             <td class="char">=</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
@@ -300,7 +281,7 @@
             <td class="char">=</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.wis.mod"></td>
             <td class="char">+</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
@@ -328,7 +309,7 @@
             <td class="char">=</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.str.mod"></td>
             <td class="char">+</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
@@ -345,7 +326,7 @@
             <td class="char">=</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
             <td class="unit"><input type="text"></td>
             <td class="char">+</td>
@@ -368,6 +349,121 @@
             <td>
               <input type="text" />
             </td>
+          </tr>
+        </table>
+      </section>
+    </main>
+    <main>
+      <section class="equipment">
+        <table id="proficiency">
+          <tr>
+            <td class="tag round-header">Weapon <br> Proficiency</td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <td class="tag round-header">Armor <br> Proficiency</td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+        </table>
+
+        <table v-for="index in 3" :key="index" class="weapon">
+          <tr>
+            <th class="tag" colspan="2">Weapon</th>
+            <th class="tag">Attack Bonus</th>
+            <th class="tag">Damage</th>
+            <th class="tag">Critical</th>
+          </tr>
+          <tr>
+            <td class="unit" colspan="2"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <th class="tag">Range</th>
+            <th class="tag">Type</th>
+            <th class="tag" colspan="3">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="3"><input type="text"></td>
+          </tr>
+        </table>
+      </section>
+      <section class="equipment equipment2">
+        <table>
+          <tr>
+            <th class="tag" colspan="2">Armor</th>
+            <th class="tag">Bonus</th>
+            <th class="tag">Max Dex</th>
+            <th class="tag">Penalty</th>
+          </tr>
+          <tr>
+            <td class="unit" colspan="2"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <th class="tag">Speed Reduction</th>
+            <th class="tag">Type</th>
+            <th class="tag" colspan="3">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="3"><input type="text"></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th class="tag" colspan="2">Shield</th>
+            <th class="tag">Bonus</th>
+            <th class="tag">Max Dex</th>
+            <th class="tag">Penalty</th>
+          </tr>
+          <tr>
+            <td class="unit" colspan="2"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+          <tr>
+            <th class="tag">Speed Reduction</th>
+            <th class="tag">Type</th>
+            <th class="tag" colspan="3">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="3"><input type="text"></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th class="tag">Boots</th>
+            <th class="tag">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <th class="tag">Armlet</th>
+            <th class="tag">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input type="text"></td>
+            <td class="unit"><input type="text"></td>
           </tr>
         </table>
       </section>
@@ -400,6 +496,10 @@ form#sheet
     cursor: pointer
     color: white
     transition: border-color 0.25s
+  input[type="text"]:read-only
+    background-color: $faded-light
+  .readonly
+    background-color: $faded-light
   header
     section#character
       table#info
@@ -416,7 +516,6 @@ form#sheet
             width: 100%
             padding: 6px
             font-size: 100%
-
   main
     display: flex
     justify-content: space-between
@@ -521,4 +620,20 @@ form#sheet
             border-top: 1px solid white
             border-bottom: 1px solid black
             outline: none
+    section.equipment
+      width: 50%
+      .tag
+        width: 100px
+        font-size: 12px
+      table
+        width: 100%
+        input[type="text"]
+          width: 100%
+          box-sizing: border-box
+          text-align: center
+          padding: 6px
+          border: 1px solid $faded-dark
+    section.equipment2
+      table
+        padding-top: 11px
 </style>
