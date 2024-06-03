@@ -604,6 +604,7 @@ form#sheet
             box-sizing: border-box
             text-align: center
             padding: 6px
+            border: 1px solid black
     section#languages-gold
       width: 40%
       .tag
