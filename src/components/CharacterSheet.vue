@@ -1,5 +1,6 @@
 <script setup>
-  import { ref, reactive, computed } from 'vue';
+  import { reactive, computed } from 'vue';
+  import { saveAs } from 'file-saver';
   import characterData from './CharacterData.js'
   const abilityList = [
     {key: 'str', value: 'strength'},
@@ -9,6 +10,13 @@
     {key: 'wis', value: 'wisdom'},
     {key: 'cha', value: 'charisma'}
   ];
+
+  const totalFeatRows = 15;
+  const totalLanguages = 8;
+  const totalGoldValuables = 8;
+  const data = reactive(characterData);
+  data.languages = Array(totalLanguages).fill('');
+  data.goldValuables = Array(totalGoldValuables).fill('');
 
   const calculateMod = (score) => {
     if (score === '') return '';
@@ -33,22 +41,17 @@
   const exportData = () => {
     const abilitiesJson = JSON.stringify(data, null, 2);
     const blob = new Blob([abilitiesJson], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'abilities.json';
-    a.click();
+    saveAs(blob, 'abilities.json');
   };
 
   const importData = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    //TODO: clear method
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const importedData = JSON.parse(e.target.result);
-        console.log(importedData);
         for (const key in importedData) {
           if (data.hasOwnProperty(key)) {
             data[key] = importedData[key];
@@ -62,7 +65,6 @@
     reader.readAsText(file);
   };
 
-  const data = reactive(characterData);
   computeData();
 
 </script>
@@ -70,7 +72,7 @@
 <template>
   <form id="sheet">
     <section style="text-align: right">
-      <button style="color: white; padding: 10px" @click="exportData">Export</button>
+      <button style="color: white; padding: 10px" @click.prevent="exportData">Export</button>
       <input style="margin-left: 20px" type="file" @change="importData" accept=".json">
     </section>
     <header>
@@ -340,14 +342,20 @@
         <table>
           <tr>
             <td>Languages</td>
+          </tr>
+          <tr v-for="(language, index) in data.languages" :key="index">
+            <td>
+              <input v-model="data.languages[index]" type="text" />
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
             <td>Gold/Valuables</td>
           </tr>
-          <tr v-for="row in 8" :key="row">
+          <tr v-for="(valuable, index) in data.goldValuables" :key="index">
             <td>
-              <input type="text" />
-            </td>
-            <td>
-              <input type="text" />
+              <input v-model="data.goldValuables[index]" type="text" />
             </td>
           </tr>
         </table>
@@ -464,6 +472,44 @@
           <tr>
             <td class="unit"><input type="text"></td>
             <td class="unit"><input type="text"></td>
+          </tr>
+        </table>
+      </section>
+    </main>
+    <main id="feats-spells">
+      <section id="feat">
+        <table class="multiple-inputs">
+          <tr>
+            <td class="tag">Feats</td>
+          </tr>
+          <tr v-for="row in totalFeatRows" :key="row">
+            <td>
+              <input type="text" />
+            </td>
+          </tr>
+        </table>
+      </section>
+      <section id="possessions">
+        <table class="multiple-inputs">
+          <tr>
+            <td class="tag">Possessions</td>
+          </tr>
+          <tr v-for="row in totalFeatRows" :key="row">
+            <td>
+              <input type="text" />
+            </td>
+          </tr>
+        </table>
+      </section>
+      <section id="spells">
+        <table class="multiple-inputs">
+          <tr>
+            <td class="tag">Spells/Powers Known</td>
+          </tr>
+          <tr v-for="row in totalFeatRows" :key="row">
+            <td>
+              <input type="text" />
+            </td>
           </tr>
         </table>
       </section>
@@ -607,6 +653,7 @@ form#sheet
             border: 1px solid black
     section#languages-gold
       width: 40%
+      display: flex
       .tag
         background-color: $faded-dark
         color: white
@@ -614,7 +661,7 @@ form#sheet
         font-weight: bold
         text-transform: uppercase
       table
-        width: 100%
+        width: 50%
         td
           input
             border-style: none
@@ -637,4 +684,17 @@ form#sheet
     section.equipment2
       table
         padding-top: 11px
+  main#feats-spells
+    section
+      width: 33.333%
+      table.multiple-inputs
+        width: 100%
+        box-sizing: border-box
+        input
+          width: 100%
+          border-style: none
+          border-top: 1px solid white
+          border-bottom: 1px solid black
+          outline: none
+
 </style>

@@ -1,42 +1,25 @@
-let characterData = {
-  abilities: {
-    str: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-    dex: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-    con: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-    int: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-    wis: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-    cha: {
-      score: '',
-      mod: '',
-      tempScore: '',
-      tempMod: ''
-    },
-  }
+const ability = () => {
+  return {
+    score: '',
+    mod: '',
+    tempScore: '',
+    tempMod: ''
+  };
 }
+
+
+const characterData = {
+  abilities: {
+    str: ability(),
+    dex: ability(),
+    con: ability(),
+    int: ability(),
+    wis: ability(),
+    cha: ability(),
+  },
+  languages: [],
+  goldValuables: []
+}
+
 
 export default characterData;
