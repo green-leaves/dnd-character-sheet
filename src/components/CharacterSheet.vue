@@ -105,7 +105,7 @@
               name="file"
               ref="pond"
               label-idle="Drop files here..."
-              accepted-file-types="json"
+              :acceptedFileTypes="['application/json']"
               :credits="'false'"
               @addfile="addFile"
           />
@@ -443,7 +443,7 @@
         </table>
       </section>
       <section class="equipment equipment2">
-        <table>
+        <table id="armor">
           <tr>
             <th class="tag" colspan="2">Armor</th>
             <th class="tag">Bonus</th>
@@ -467,7 +467,7 @@
             <td class="unit" colspan="3"><input type="text"></td>
           </tr>
         </table>
-        <table>
+        <table id="shield">
           <tr>
             <th class="tag" colspan="2">Shield</th>
             <th class="tag">Bonus</th>
@@ -491,7 +491,7 @@
             <td class="unit" colspan="3"><input type="text"></td>
           </tr>
         </table>
-        <table>
+        <table id="boots">
           <tr>
             <th class="tag">Boots</th>
             <th class="tag">Notes</th>
@@ -501,7 +501,7 @@
             <td class="unit"><input type="text"></td>
           </tr>
         </table>
-        <table>
+        <table id="armlets">
           <tr>
             <th class="tag">Armlet</th>
             <th class="tag">Notes</th>
@@ -715,9 +715,15 @@ form#sheet
           text-align: center
           padding: 6px
           border: 1px solid $faded-dark
-    section.equipment2
-      table
-        padding-top: 11px
+    .equipment2
+      table#armor
+        margin-top: 5px
+      table#shield
+        margin-top: 20px
+      table#boots
+        margin-top: 21px
+      table#armlets
+        margin-top: -2px
   main#feats-spells
     section
       width: 33.333%
