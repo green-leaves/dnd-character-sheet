@@ -1,5 +1,7 @@
 <script setup>
   import { reactive, computed } from 'vue';
+  import vueFilePond from "vue-filepond";
+  import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
   import characterData from './CharacterData.js'
   const abilityList = [
@@ -10,6 +12,9 @@
     {key: 'wis', value: 'wisdom'},
     {key: 'cha', value: 'charisma'}
   ];
+  const FilePond = vueFilePond(
+
+  );
 
   const totalFeatRows = 15;
   const totalLanguages = 8;
@@ -17,6 +22,7 @@
   const data = reactive(characterData);
   data.languages = Array(totalLanguages).fill('');
   data.goldValuables = Array(totalGoldValuables).fill('');
+
 
   const calculateMod = (score) => {
     if (score === '') return '';
@@ -45,9 +51,10 @@
   };
 
   const importData = (event) => {
+    console.log("import")
     const file = event.target.files[0];
     if (!file) return;
-    //TODO: clear method
+
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
@@ -65,15 +72,45 @@
     reader.readAsText(file);
   };
 
-  computeData();
+  const addFile = (error, file) => {
+    if (error) {
+      console.error('Error adding file:', error);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        for (const key in importedData) {
+          if (data.hasOwnProperty(key)) {
+            data[key] = importedData[key];
+          }
+        }
+        computeData();
+      } catch (error) {
+        console.error('Error parsing JSON file:', error);
+      }
+    };
+    reader.readAsText(file.file);
+  };
 
+  computeData();
 </script>
 
 <template>
   <form id="sheet">
-    <section style="text-align: right">
-      <button style="color: white; padding: 10px" @click.prevent="exportData">Export</button>
-      <input style="margin-left: 20px" type="file" @change="importData" accept=".json">
+    <section id="file-upload-container">
+        <div id="file-pond-div">
+          <file-pond
+              name="file"
+              ref="pond"
+              label-idle="Drop files here..."
+              accepted-file-types="json"
+              :credits="'false'"
+              @addfile="addFile"
+          />
+        </div>
+      <button id="export" @click.prevent="exportData">Export</button>
     </section>
     <header>
       <section id="character">
@@ -531,21 +568,18 @@ form#sheet
   width: $sheet-width
   .round-header
     border-radius: 10px 10px 0 0
-  input[type="file"]::file-selector-button
-    border-radius: 8px
-    border: 1px solid transparent
-    padding: 11px
-    font-size: 1em
-    font-weight: 500
-    font-family: inherit
-    background-color: #1a1a1a
-    cursor: pointer
-    color: white
-    transition: border-color 0.25s
   input[type="text"]:read-only
     background-color: $faded-light
   .readonly
     background-color: $faded-light
+  section#file-upload-container
+    display: flex
+    div#file-pond-div
+      width: 50%
+    button#export
+      color: white
+      height: 77px
+      margin-left: 10px
   header
     section#character
       table#info
@@ -593,7 +627,7 @@ form#sheet
             border: none
             box-sizing: border-box
             text-align: center
-            padding: 6px
+            font-size: 18px
             outline: none
     section#hp
       margin-top: 10px
