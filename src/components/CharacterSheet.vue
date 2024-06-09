@@ -3,18 +3,9 @@
   import vueFilePond from "vue-filepond";
   import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
-  import characterData from './CharacterData.js'
-  const abilityList = [
-    {key: 'str', value: 'strength'},
-    {key: 'dex', value: 'dexterity'},
-    {key: 'con', value: 'constitution'},
-    {key: 'int', value: 'intelligence'},
-    {key: 'wis', value: 'wisdom'},
-    {key: 'cha', value: 'charisma'}
-  ];
-  const FilePond = vueFilePond(
+  import characterData, {abilityList, skills} from './CharacterData.js'
 
-  );
+  const FilePond = vueFilePond();
 
   const totalFeatRows = 15;
   const totalLanguages = 8;
@@ -42,6 +33,75 @@
       data.abilities[ability.key].mod = computed(() => computeMod(ability.key));
       data.abilities[ability.key].tempMod = computed(() => computedTempMod(ability.key));
     }
+    data.ac.total = computed(() => {
+      return 10
+          + Number(data.ac.armor)
+          + Number(data.ac.shield)
+          + Number(data.abilities.dex.mod)
+          + Number(data.ac.size)
+          + Number(data.ac.natural)
+          + Number(data.ac.misc);
+    });
+    data.flatFooted.ac = computed(() => {
+      return 10
+          + Number(data.ac.armor)
+          + Number(data.ac.shield)
+          + Number(data.ac.size)
+          + Number(data.ac.natural)
+          + Number(data.ac.misc);
+    })
+
+    data.touch.ac = computed(() => {
+      return 10
+          + Number(data.abilities.dex.mod)
+          + Number(data.ac.size)
+          + Number(data.ac.natural)
+          + Number(data.ac.misc);
+    })
+
+    data.init.total = computed(() => {
+      return Number(data.abilities.dex.mod) + Number(data.init.misc);
+    })
+
+    data.fortitudeSave.total = computed(() => {
+      return Number(data.fortitudeSave.base)
+          + Number(data.abilities.con.mod)
+          + Number(data.fortitudeSave.magic)
+          + Number(data.fortitudeSave.misc)
+          + Number(data.fortitudeSave.temp)
+    });
+
+    data.reflexSave.total = computed(() => {
+      return Number(data.reflexSave.base)
+          + Number(data.abilities.dex.mod)
+          + Number(data.reflexSave.magic)
+          + Number(data.reflexSave.misc)
+          + Number(data.reflexSave.temp)
+    })
+
+    data.willPowerSave.total = computed(() => {
+      return Number(data.willPowerSave.base)
+          + Number(data.abilities.wis.mod)
+          + Number(data.willPowerSave.magic)
+          + Number(data.willPowerSave.misc)
+          + Number(data.willPowerSave.temp)
+    })
+
+    data.meleeAtkBonus.total = computed(() => {
+      return Number(data.meleeAtkBonus.base)
+          + Number(data.abilities.str.mod)
+          + Number(data.meleeAtkBonus.magic)
+          + Number(data.meleeAtkBonus.misc)
+          + Number(data.meleeAtkBonus.temp)
+    })
+
+    data.rangeAtkBonus.total = computed(() => {
+      return Number(data.rangeAtkBonus.base)
+          + Number(data.abilities.dex.mod)
+          + Number(data.rangeAtkBonus.magic)
+          + Number(data.rangeAtkBonus.misc)
+          + Number(data.rangeAtkBonus.temp)
+    })
   }
 
   const exportData = () => {
@@ -50,27 +110,6 @@
     saveAs(blob, 'abilities.json');
   };
 
-  const importData = (event) => {
-    console.log("import")
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target.result);
-        for (const key in importedData) {
-          if (data.hasOwnProperty(key)) {
-            data[key] = importedData[key];
-          }
-        }
-        computeData();
-      } catch (error) {
-        console.error('Error parsing JSON file:', error);
-      }
-    };
-    reader.readAsText(file);
-  };
 
   const addFile = (error, file) => {
     if (error) {
@@ -117,49 +156,49 @@
         <table id="info">
           <tr>
             <td colspan="2">
-              <input type="text" name="character-name" title="character-name" placeholder="Thalorin Nightbane">
+              <input type="text" v-model="data.characterInfo.characterName" name="character-name" title="character-name" placeholder="Thalorin Nightbane">
               <br>
               <label for="character-name">Character Name</label>
             </td>
             <td>
-              <input type="text" name="class-level" title="class" placeholder="Necromancer">
+              <input type="text" name="class-level" v-model="data.characterInfo.firstClassLevel"  title="class" placeholder="Necromancer">
               <br>
               <label for="class-level">Class (Level)</label>
             </td>
             <td>
-              <input type="text" name="alignment" title="alignment">
+              <input type="text" name="alignment" v-model="data.characterInfo.alignment"  title="alignment">
               <br>
               <label for="class-level">Alignment</label>
             </td>
             <td colspan="2">
-              <input type="text" name="deities" title="deities">
+              <input type="text" name="deities" v-model="data.characterInfo.deities"  title="deities">
               <br>
               <label for="class-level">Deities</label>
             </td>
           </tr>
           <tr>
             <td colspan="2">
-              <input type="text" name="player-name" title="player-name">
+              <input type="text" name="player-name" v-model="data.characterInfo.playerName"  title="player-name">
               <br>
               <label for="player-name">Player Name</label>
             </td>
             <td>
-              <input type="text" name="class-level" title="experience">
+              <input type="text" name="class-level" v-model="data.characterInfo.secondClassLevel"  title="experience">
               <br>
               <label for="class-level">Class (Level)</label>
             </td>
             <td>
-              <input type="text" name="age" title="age">
+              <input type="text" name="age" title="age" v-model="data.characterInfo.age" >
               <br>
               <label for="class-level">Age</label>
             </td>
             <td>
-              <input type="text" name="height" title="height">
+              <input type="text" name="height" title="height" v-model="data.characterInfo.height" >
               <br>
               <label for="class-level">Height</label>
             </td>
             <td>
-              <input type="text" name="weight" title="weight" placeholder="80kg">
+              <input type="text" name="weight" title="weight" placeholder="80kg" v-model="data.characterInfo.weight" >
               <br>
               <label for="class-level">Weight</label>
             </td>
@@ -204,21 +243,25 @@
           </tr>
           <tr>
             <td class="tag round-header"><span>AC</span></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly :value="data.ac.total" type="text"></td>
             <td class="char"><span>=</span></td>
             <td class="char"><span>10</span></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
+            <td class="unit"><input v-model="data.ac.armor" type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input v-model="data.ac.shield" type="text"></td>
+            <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
-            <td class="unit"><input type="text"></td><td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.ac.size"  type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input v-model="data.ac.natural"  type="text"></td>
+            <td class="char">+</td>
+            <td class="unit"><input v-model="data.ac.misc" type="text"></td>
           </tr>
           <tr>
             <td class="tag unit"><span>Flat-Footed</span></td>
-            <td class="unit" colspan="4"><input type="text"></td>
+            <td class="unit" colspan="4"><input readonly :value="data.flatFooted.ac" type="text"></td>
             <td></td>
             <td></td>
             <td class="tag unit round-header" colspan="3">XP</td>
@@ -226,7 +269,7 @@
           </tr>
           <tr>
             <td class="tag unit"><span>Touch</span></td>
-            <td class="unit" colspan="4"><input type="text"></td>
+            <td class="unit" colspan="4"><input readonly :value="data.touch.ac"  type="text"></td>
             <td></td>
             <td></td>
             <td class="tag unit" colspan="3">Next Level</td>
@@ -242,11 +285,11 @@
           </tr>
           <tr>
             <td class="tag round-header"><span>INIT</span></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly v-model="data.init.total" type="text"></td>
             <td class="char"><span>=</span></td>
             <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.init.misc"  type="text"></td>
           </tr>
           <tr>
             <td class="tag"><span>Speed</span></td>
@@ -282,51 +325,51 @@
               <span class="rotate-tag">CON</span>
               <span>Fortitude</span>
             </td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.fortitudeSave.total" type="text"></td>
             <td class="char">=</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.fortitudeSave.base" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.con.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.fortitudeSave.magic" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.fortitudeSave.misc" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.fortitudeSave.temp" type="text"></td>
           </tr>
           <tr>
             <td class="tag">
               <span class="rotate-tag">DEX</span>
               <span>Reflex</span>
             </td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.reflexSave.total" type="text"></td>
             <td class="char">=</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.reflexSave.base" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.reflexSave.magic" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.reflexSave.misc" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.reflexSave.temp" type="text"></td>
           </tr>
           <tr>
             <td class="tag">
               <span class="rotate-tag">WIS</span>
               <span>WillPower</span>
             </td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.willPowerSave.total" type="text"></td>
             <td class="char">=</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.willPowerSave.base" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.wis.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.willPowerSave.magic" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.willPowerSave.misc" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.willPowerSave.temp" type="text"></td>
           </tr>
         </table>
         <table class="saves-and-attack">
@@ -344,34 +387,34 @@
               <span class="rotate-tag">STR</span>
               <span>Melee</span>
             </td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly v-model="data.meleeAtkBonus.total" type="text"></td>
             <td class="char">=</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.meleeAtkBonus.base" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.str.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.meleeAtkBonus.magic" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.meleeAtkBonus.misc" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.meleeAtkBonus.temp" type="text"></td>
           </tr>
           <tr>
             <td class="tag">
               <span class="rotate-tag">DEX</span>
               <span>Range</span>
             </td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input readonly v-model="data.rangeAtkBonus.total" type="text"></td>
             <td class="char">=</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.rangeAtkBonus.base" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.rangeAtkBonus.magic" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.rangeAtkBonus.misc" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.rangeAtkBonus.temp" type="text"></td>
           </tr>
         </table>
       </section>
@@ -550,6 +593,30 @@
           </tr>
         </table>
       </section>
+    </main>
+    <main id="skills">
+      <table>
+        <tr>
+          <td class="tag">Skill</td>
+          <td class="tag">Class Skill</td>
+          <td class="tag">Key Ability</td>
+          <td class="tag">Skill Modifier</td>
+          <td class="tag">=</td>
+          <td class="tag">Skill Rank</td>
+          <td class="tag">Ability Mod</td>
+          <td class="tag">Misc Mod</td>
+        </tr>
+        <tr v-for="skill in skills">
+          <td style="text-align: left">{{skill.name}}</td>
+          <td></td>
+          <td>{{skill.keyAbility}}</td>
+          <td></td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
     </main>
   </form>
 </template>
@@ -736,5 +803,11 @@ form#sheet
           border-top: 1px solid white
           border-bottom: 1px solid black
           outline: none
-
+  main#skills
+    table
+      width: 100%
+      border-collapse: collapse
+      tr
+       td
+         border: 1px solid black
 </style>
