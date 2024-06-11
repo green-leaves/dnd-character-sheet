@@ -3,17 +3,26 @@
   import vueFilePond from "vue-filepond";
   import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
-  import characterData, {abilityList, skills} from './CharacterData.js'
+  import characterData, {abilityList, defenseItem, skills, weapon} from './CharacterData.js'
 
   const FilePond = vueFilePond();
 
   const totalFeatRows = 15;
   const totalLanguages = 8;
   const totalGoldValuables = 8;
+  const totalProficiencies = 4;
+  const totalWeapons = 3;
   const data = reactive(characterData);
+
+  // Init Data
   data.languages = Array(totalLanguages).fill('');
   data.goldValuables = Array(totalGoldValuables).fill('');
-
+  data.weaponProficiencies = Array(totalProficiencies).fill('');
+  data.armorProficiencies = Array(totalProficiencies).fill('');
+  data.weapons = Array(totalWeapons).fill(null).map(() => weapon());
+  data.feats = Array(totalFeatRows).fill('');
+  data.possessions = Array(totalFeatRows).fill('');
+  data.spellsAndPowersKnown = Array(totalFeatRows).fill('');
 
   const calculateMod = (score) => {
     if (score === '') return '';
@@ -107,9 +116,10 @@
   const exportData = () => {
     const abilitiesJson = JSON.stringify(data, null, 2);
     const blob = new Blob([abilitiesJson], { type: 'application/json' });
-    saveAs(blob, 'abilities.json');
+    const exportFileName = data.characterInfo.characterName.replaceAll(" " ,"")
+        + "_" + new Date().toISOString() + ".json";
+    saveAs(blob, exportFileName);
   };
-
 
   const addFile = (error, file) => {
     if (error) {
@@ -446,21 +456,19 @@
         <table id="proficiency">
           <tr>
             <td class="tag round-header">Weapon <br> Proficiency</td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td v-for="(proficiency, index) in data.weaponProficiencies" class="unit">
+              <input v-model="data.weaponProficiencies[index]" type="text">
+            </td>
           </tr>
           <tr>
             <td class="tag round-header">Armor <br> Proficiency</td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td v-for="(proficiency, index) in data.armorProficiencies" class="unit">
+              <input v-model="data.armorProficiencies[index]" type="text">
+            </td>
           </tr>
         </table>
 
-        <table v-for="index in 3" :key="index" class="weapon">
+        <table v-for="(weapon, index) in data.weapons" class="weapon">
           <tr>
             <th class="tag" colspan="2">Weapon</th>
             <th class="tag">Attack Bonus</th>
@@ -468,10 +476,12 @@
             <th class="tag">Critical</th>
           </tr>
           <tr>
-            <td class="unit" colspan="2"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="2">
+              <input v-model="data.weapons[index].name" type="text">
+            </td>
+            <td class="unit"><input v-model="data.weapons[index].attackBonus" type="text"></td>
+            <td class="unit"><input v-model="data.weapons[index].damage" type="text"></td>
+            <td class="unit"><input v-model="data.weapons[index].critical" type="text"></td>
           </tr>
           <tr>
             <th class="tag">Range</th>
@@ -479,9 +489,11 @@
             <th class="tag" colspan="3">Notes</th>
           </tr>
           <tr>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit" colspan="3"><input type="text"></td>
+            <td class="unit"><input v-model="data.weapons[index].range" type="text"></td>
+            <td class="unit"><input v-model="data.weapons[index].types" type="text"></td>
+            <td class="unit" colspan="3">
+              <input type="text" v-model="data.weapons[index].notes">
+            </td>
           </tr>
         </table>
       </section>
@@ -494,10 +506,12 @@
             <th class="tag">Penalty</th>
           </tr>
           <tr>
-            <td class="unit" colspan="2"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="2">
+              <input v-model="data.armor.name" type="text">
+            </td>
+            <td class="unit"><input v-model="data.armor.bonus" type="text"></td>
+            <td class="unit"><input v-model="data.armor.maxDex" type="text"></td>
+            <td class="unit"><input v-model="data.armor.penalty" type="text"></td>
           </tr>
           <tr>
             <th class="tag">Speed Reduction</th>
@@ -505,9 +519,9 @@
             <th class="tag" colspan="3">Notes</th>
           </tr>
           <tr>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit" colspan="3"><input type="text"></td>
+            <td class="unit"><input v-model="data.armor.speedReduction"  type="text"></td>
+            <td class="unit"><input v-model="data.armor.type" type="text"></td>
+            <td class="unit" colspan="3"><input v-model="data.armor.notes"  type="text"></td>
           </tr>
         </table>
         <table id="shield">
@@ -518,10 +532,12 @@
             <th class="tag">Penalty</th>
           </tr>
           <tr>
-            <td class="unit" colspan="2"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit" colspan="2">
+              <input v-model="data.shield.name" type="text">
+            </td>
+            <td class="unit"><input v-model="data.shield.bonus" type="text"></td>
+            <td class="unit"><input v-model="data.shield.maxDex" type="text"></td>
+            <td class="unit"><input v-model="data.shield.penalty" type="text"></td>
           </tr>
           <tr>
             <th class="tag">Speed Reduction</th>
@@ -529,9 +545,9 @@
             <th class="tag" colspan="3">Notes</th>
           </tr>
           <tr>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
-            <td class="unit" colspan="3"><input type="text"></td>
+            <td class="unit"><input v-model="data.shield.speedReduction"  type="text"></td>
+            <td class="unit"><input v-model="data.shield.type" type="text"></td>
+            <td class="unit" colspan="3"><input v-model="data.shield.notes"  type="text"></td>
           </tr>
         </table>
         <table id="boots">
@@ -540,8 +556,8 @@
             <th class="tag">Notes</th>
           </tr>
           <tr>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.boots.name" type="text"></td>
+            <td class="unit"><input v-model="data.boots.notes" type="text"></td>
           </tr>
         </table>
         <table id="armlets">
@@ -550,8 +566,8 @@
             <th class="tag">Notes</th>
           </tr>
           <tr>
-            <td class="unit"><input type="text"></td>
-            <td class="unit"><input type="text"></td>
+            <td class="unit"><input v-model="data.armlet.name" type="text"></td>
+            <td class="unit"><input v-model="data.armlet.notes" type="text"></td>
           </tr>
         </table>
       </section>
@@ -564,7 +580,7 @@
           </tr>
           <tr v-for="row in totalFeatRows" :key="row">
             <td>
-              <input type="text" />
+              <input v-model="data.feats[row]" type="text" />
             </td>
           </tr>
         </table>
@@ -576,7 +592,7 @@
           </tr>
           <tr v-for="row in totalFeatRows" :key="row">
             <td>
-              <input type="text" />
+              <input v-model="data.possessions[row]" type="text" />
             </td>
           </tr>
         </table>
@@ -588,7 +604,7 @@
           </tr>
           <tr v-for="row in totalFeatRows" :key="row">
             <td>
-              <input type="text" />
+              <input v-model="data.spellsAndPowersKnown[row]" type="text" />
             </td>
           </tr>
         </table>

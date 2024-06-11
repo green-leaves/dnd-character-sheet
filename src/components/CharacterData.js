@@ -27,6 +27,30 @@ const attackBonus = () => {
   }
 }
 
+export const weapon = () => {
+  return {
+    name: '',
+    attackBonus: '',
+    damage: '',
+    critical: '',
+    range: '',
+    type: '',
+    notes: ''
+  }
+}
+
+export const defenseItem = () => {
+  return {
+    name: '',
+    bonus: '',
+    maxDex: '',
+    penalty: '',
+    speedReduction: '',
+    type: '',
+    notes: ''
+  }
+}
+
 const characterData = {
   characterInfo: {
     characterName: '',
@@ -71,7 +95,17 @@ const characterData = {
   meleeAtkBonus: attackBonus(),
   rangeAtkBonus: attackBonus(),
   languages: [],
-  goldValuables: []
+  goldValuables: [],
+  weaponProficiencies: [],
+  armorProficiencies: [],
+  weapons: [],
+  armor: defenseItem(),
+  shield: defenseItem(),
+  boots: defenseItem(),
+  armlet: defenseItem(),
+  feats: [],
+  possessions: [],
+  spellsAndPowersKnown: [],
 }
 
 export const abilityList = [
