@@ -3,7 +3,7 @@
   import vueFilePond from "vue-filepond";
   import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
-  import characterData, {abilityList, defenseItem, skills, weapon} from './CharacterData.js'
+  import characterData, {abilityList, defenseItem, weapon} from './CharacterData.js'
 
   const FilePond = vueFilePond();
 
@@ -12,6 +12,7 @@
   const totalGoldValuables = 8;
   const totalProficiencies = 4;
   const totalWeapons = 3;
+  const totalMiscEquips = 2;
   const data = reactive(characterData);
 
   // Init Data
@@ -23,6 +24,7 @@
   data.feats = Array(totalFeatRows).fill('');
   data.possessions = Array(totalFeatRows).fill('');
   data.spellsAndPowersKnown = Array(totalFeatRows).fill('');
+  data.miscEquips = Array(totalMiscEquips).fill(null).map(() => defenseItem());
 
   const calculateMod = (score) => {
     if (score === '') return '';
@@ -111,6 +113,18 @@
           + Number(data.rangeAtkBonus.misc)
           + Number(data.rangeAtkBonus.temp)
     })
+
+    for (const skill of data.skills) {
+      skill.skillMod = computed(() => {
+        if (!skill.classSkill) {
+          return 0;
+        }
+        return Number(skill.skillRank)
+            + Number(data.abilities[skill.keyAbility]?.mod || 0)
+            + Number(skill.miscMod)
+            + Number(skill.penalty);
+      });
+    }
   }
 
   const exportData = () => {
@@ -570,6 +584,16 @@
             <td class="unit"><input v-model="data.armlet.notes" type="text"></td>
           </tr>
         </table>
+        <table v-for="(miscEquip, index) in data.miscEquips" class="miscEquip">
+          <tr>
+            <th class="tag">Misc</th>
+            <th class="tag">Notes</th>
+          </tr>
+          <tr>
+            <td class="unit"><input v-model="data.miscEquips[index].name" type="text"></td>
+            <td class="unit"><input v-model="data.miscEquips[index].notes" type="text"></td>
+          </tr>
+        </table>
       </section>
     </main>
     <main id="feats-spells">
@@ -619,18 +643,30 @@
           <td class="tag">Skill Modifier</td>
           <td class="tag">=</td>
           <td class="tag">Skill Rank</td>
+          <td class="tag">+</td>
           <td class="tag">Ability Mod</td>
+          <td class="tag">+</td>
           <td class="tag">Misc Mod</td>
+          <td class="tag">Penalty</td>
         </tr>
-        <tr v-for="skill in skills">
-          <td style="text-align: left">{{skill.name}}</td>
-          <td></td>
+        <tr v-for="skill in data.skills" :class="skill.classSkill ? '' : 'readonly'">
+          <td>{{skill.name}}</td>
+          <td><input type="checkbox" v-model="skill.classSkill" :checked="skill.classSkill" /></td>
           <td>{{skill.keyAbility}}</td>
-          <td></td>
+          <td>
+            <span>{{skill.skillMod}}</span>
+          </td>
           <td>=</td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td><input :readonly="!skill.classSkill"  v-model="skill.skillRank" type="text"/></td>
+          <td>+</td>
+          <td>{{data.abilities[skill.keyAbility]?.mod || 0}}</td>
+          <td>+</td>
+          <td><input :readonly="!skill.classSkill" v-model="skill.miscMod" type="text"/></td>
+          <td>
+            <input :readonly="skill.keyAbility !== 'str' && skill.keyAbility !== 'dex' || !skill.classSkill"
+                   v-model="skill.penalty"
+                   type="text"/>
+          </td>
         </tr>
       </table>
     </main>
@@ -790,6 +826,8 @@ form#sheet
       .tag
         width: 100px
         font-size: 12px
+      table.weapon
+        margin-top: 25px
       table
         width: 100%
         input[type="text"]
@@ -801,12 +839,6 @@ form#sheet
     .equipment2
       table#armor
         margin-top: 5px
-      table#shield
-        margin-top: 20px
-      table#boots
-        margin-top: 21px
-      table#armlets
-        margin-top: -2px
   main#feats-spells
     section
       width: 33.333%
@@ -823,7 +855,20 @@ form#sheet
     table
       width: 100%
       border-collapse: collapse
+      input[type="text"]
+        width: 100%
+        box-sizing: border-box
+        text-align: center
+        border: none
+        padding: 6px
+        font-size: 15px
       tr
-       td
-         border: 1px solid black
+        td:first-child
+          width: 150px
+          text-align: left
+          padding-left: 5px
+          font-weight: bold
+        td
+          border: 1px solid black
+
 </style>

@@ -51,6 +51,44 @@ export const defenseItem = () => {
   }
 }
 
+const skill = (name, keyAbility) => {
+  return {
+    name: name,
+    classSkill: true,
+    keyAbility: keyAbility,
+    skillMod: '',
+    skillRank: '',
+    miscMod: '',
+    penalty: ''
+  }
+}
+
+const skills = () => {
+  return [
+    skill("Craft", ""),
+    skill("Athletics", "str"),
+    skill("Acrobatics", "dex"),
+    skill("Burgling", "dex"),
+    skill("Sleight of Hand", "dex"),
+    skill("Stealth", "dex"),
+    skill("Arcana", "int"),
+    skill("History", "int"),
+    skill("Investigation", "int"),
+    skill("Nature", "int"),
+    skill("Religion", "int"),
+    skill("Piloting", "int"),
+    skill("Insight", "wis"),
+    skill("Medicine", "wis"),
+    skill("Perception", "wis"),
+    skill("Survival", "wis"),
+    skill("Animal Handling", "cha"),
+    skill("Deception", "cha"),
+    skill("Intimidation", "cha"),
+    skill("Performance", "cha"),
+    skill("Persuasion", "cha"),
+  ]
+}
+
 const characterData = {
   characterInfo: {
     characterName: '',
@@ -103,9 +141,11 @@ const characterData = {
   shield: defenseItem(),
   boots: defenseItem(),
   armlet: defenseItem(),
+  miscEquips: [],
   feats: [],
   possessions: [],
   spellsAndPowersKnown: [],
+  skills: skills(),
 }
 
 export const abilityList = [
@@ -117,29 +157,6 @@ export const abilityList = [
   {key: 'cha', value: 'charisma'}
 ];
 
-export const skills = [
-  {name: "Craft", keyAbility: ""},
-  {name: "Athletics", keyAbility: "dex"},
-  {name: "Acrobatics", keyAbility: "dex"},
-  {name: "Burgling", keyAbility: "dex"},
-  {name: "Sleight of Hand", keyAbility: "int"},
-  {name: "Stealth", keyAbility: "int"},
-  {name: "Arcana", keyAbility: "int"},
-  {name: "History", keyAbility: "int"},
-  {name: "Investigation", keyAbility: "int"},
-  {name: "Nature", keyAbility: "int"},
-  {name: "Religion", keyAbility: "int"},
-  {name: "Piloting", keyAbility: "int"},
-  {name: "Insight", keyAbility: "wis"},
-  {name: "Medicine", keyAbility: "wis"},
-  {name: "Perception", keyAbility: "wis"},
-  {name: "Survival", keyAbility: "wis"},
-  {name: "Animal Handling", keyAbility: "cha"},
-  {name: "Deception", keyAbility: "cha"},
-  {name: "Intimidation", keyAbility: "cha"},
-  {name: "Performance", keyAbility: "cha"},
-  {name: "Persuasion", keyAbility: "cha"}
-]
 
 
 export default characterData;
