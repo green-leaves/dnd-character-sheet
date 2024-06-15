@@ -101,6 +101,15 @@ const characterData = {
     height: '',
     weight: '',
   },
+  level: {
+    currentXP: 0,
+    nextLevelXP: '',
+    currentLevel: 1,
+  },
+  hp: {
+    currentHP: '',
+    CHP: ''
+  },
   abilities: {
     str: ability(),
     dex: ability(),
@@ -157,6 +166,40 @@ export const abilityList = [
   {key: 'cha', value: 'charisma'}
 ];
 
+const xpLevels = [
+  { requiredXP: 0, level: 1, nextXP: 300 },
+  { requiredXP: 300, level: 2, nextXP: 900 },
+  { requiredXP: 900, level: 3, nextXP: 2700 },
+  { requiredXP: 2700, level: 4, nextXP: 6500 },
+  { requiredXP: 6500, level: 5, nextXP: 14000 },
+  { requiredXP: 14000, level: 6, nextXP: 23000 },
+  { requiredXP: 23000, level: 7, nextXP: 34000 },
+  { requiredXP: 34000, level: 8, nextXP: 48000 },
+  { requiredXP: 48000, level: 9, nextXP: 64000 },
+  { requiredXP: 64000, level: 10, nextXP: 85000 },
+  { requiredXP: 85000, level: 11, nextXP: 100000 },
+  { requiredXP: 100000, level: 12, nextXP: 120000 },
+  { requiredXP: 120000, level: 13, nextXP: 140000 },
+  { requiredXP: 140000, level: 14, nextXP: 165000 },
+  { requiredXP: 165000, level: 15, nextXP: 195000 },
+  { requiredXP: 195000, level: 16, nextXP: 225000 },
+  { requiredXP: 225000, level: 17, nextXP: 265000 },
+  { requiredXP: 265000, level: 18, nextXP: 305000 },
+  { requiredXP: 305000, level: 19, nextXP: 355000 },
+  { requiredXP: 355000, level: 20, nextXP: Infinity }  // Level 20 is the max level
+];
+
+export const getLevelInfo = (currentXP) => {
+  for (let i = 0; i < xpLevels.length; i++) {
+    if (currentXP >= xpLevels[i].requiredXP
+      && currentXP < xpLevels[i].nextXP) {
+      return {
+        currentLevel: xpLevels[i].level,
+        nextLevelXP: xpLevels[i].nextXP
+      };
+    }
+  }
+}
 
 
 export default characterData;

@@ -1,9 +1,9 @@
 <script setup>
-  import { reactive, computed } from 'vue';
+  import { reactive, ref, computed } from 'vue';
   import vueFilePond from "vue-filepond";
   import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
-  import characterData, {abilityList, defenseItem, weapon} from './CharacterData.js'
+  import characterData, {abilityList, defenseItem, weapon, getLevelInfo} from './CharacterData.js'
 
   const FilePond = vueFilePond();
 
@@ -125,6 +125,14 @@
             + Number(skill.penalty);
       });
     }
+
+    const levelInfo = computed(() => {
+      return getLevelInfo(data.level.currentXP)
+    });
+
+    data.level.currentLevel = computed(() => levelInfo.value.currentLevel);
+    data.level.nextLevelXP = computed(() => levelInfo.value?.nextLevelXP);
+
   }
 
   const exportData = () => {
@@ -207,7 +215,7 @@
               <label for="player-name">Player Name</label>
             </td>
             <td>
-              <input type="text" name="class-level" v-model="data.characterInfo.secondClassLevel"  title="experience">
+              <input type="text" name="class-level" v-model="data.level.currentLevel"  title="experience">
               <br>
               <label for="class-level">Class (Level)</label>
             </td>
@@ -289,15 +297,15 @@
             <td></td>
             <td></td>
             <td class="tag unit round-header" colspan="3">XP</td>
-            <td class="unit" colspan="6"><input type="text"></td>
+            <td class="unit" colspan="6"><input v-model="data.level.currentXP" type="text"></td>
           </tr>
           <tr>
             <td class="tag unit"><span>Touch</span></td>
-            <td class="unit" colspan="4"><input readonly :value="data.touch.ac"  type="text"></td>
+            <td class="unit" colspan="4"><input readonly :value="data.touch.ac" type="text"></td>
             <td></td>
             <td></td>
             <td class="tag unit" colspan="3">Next Level</td>
-            <td class="unit" colspan="6"><input type="text"></td>
+            <td class="unit" colspan="6"><input readonly :value="data.level.nextLevelXP" type="text"></td>
           </tr>
           <tr class="small-header">
             <td><span>&nbsp;</span></td>
@@ -708,13 +716,14 @@ form#sheet
           label
             margin-bottom: 5px
             text-transform: uppercase
-
+            font-weight: bold
           input
             border: 0
             border-bottom: 1px solid $faded
             width: 100%
             padding: 6px
             font-size: 100%
+            text-align: center
   main
     display: flex
     justify-content: space-between
