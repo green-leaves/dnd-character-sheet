@@ -44,6 +44,7 @@
       data.abilities[ability.key].mod = computed(() => computeMod(ability.key));
       data.abilities[ability.key].tempMod = computed(() => computedTempMod(ability.key));
     }
+
     data.ac.total = computed(() => {
       return 10
           + Number(data.ac.armor)
@@ -53,6 +54,7 @@
           + Number(data.ac.natural)
           + Number(data.ac.misc);
     });
+
     data.flatFooted.ac = computed(() => {
       return 10
           + Number(data.ac.armor)
@@ -61,6 +63,9 @@
           + Number(data.ac.natural)
           + Number(data.ac.misc);
     })
+
+    data.ac.armor = computed(() => Number(data.armor.bonus));
+    data.ac.shield = computed(() => Number(data.shield.bonus));
 
     data.touch.ac = computed(() => {
       return 10
@@ -116,9 +121,6 @@
 
     for (const skill of data.skills) {
       skill.skillMod = computed(() => {
-        if (!skill.classSkill) {
-          return 0;
-        }
         return Number(skill.skillRank)
             + Number(data.abilities[skill.keyAbility]?.mod || 0)
             + Number(skill.miscMod)
@@ -193,9 +195,9 @@
               <label for="character-name">Character Name</label>
             </td>
             <td>
-              <input type="text" name="class-level" v-model="data.characterInfo.firstClassLevel"  title="class" placeholder="Necromancer">
+              <input type="text" name="class-level" v-model="data.characterInfo.class"  title="class" placeholder="Necromancer">
               <br>
-              <label for="class-level">Class (Level)</label>
+              <label for="class-level">Class</label>
             </td>
             <td>
               <input type="text" name="alignment" v-model="data.characterInfo.alignment"  title="alignment">
@@ -215,9 +217,9 @@
               <label for="player-name">Player Name</label>
             </td>
             <td>
-              <input type="text" name="class-level" v-model="data.level.currentLevel"  title="experience">
+              <input type="text" name="class-level" readonly v-model="data.level.currentLevel"  title="experience">
               <br>
-              <label for="class-level">Class (Level)</label>
+              <label for="class-level">Level</label>
             </td>
             <td>
               <input type="text" name="age" title="age" v-model="data.characterInfo.age" >
@@ -279,9 +281,9 @@
             <td class="char"><span>=</span></td>
             <td class="char"><span>10</span></td>
             <td class="char">+</td>
-            <td class="unit"><input v-model="data.ac.armor" type="text"></td>
+            <td class="unit"><input readonly v-model="data.ac.armor" type="text"></td>
             <td class="char">+</td>
-            <td class="unit"><input v-model="data.ac.shield" type="text"></td>
+            <td class="unit"><input readonly v-model="data.ac.shield" type="text"></td>
             <td class="char">+</td>
             <td class="unit"><input readonly type="text" :value="data.abilities.dex.mod"></td>
             <td class="char">+</td>
@@ -328,14 +330,14 @@
             <td colspan="5" class="unit"><input type="text"></td>
             <td></td>
             <td class="tag unit round-header" colspan="3">HP</td>
-            <td class="unit" colspan="6"><input type="text"></td>
+            <td class="unit" colspan="6"><input v-model="data.hp.currentHP" type="text"></td>
           </tr>
           <tr>
             <td class="tag"><span>Action</span></td>
             <td colspan="5" class="unit"><input type="text"></td>
             <td></td>
             <td class="tag unit" colspan="3">CHP</td>
-            <td class="unit" colspan="6"><input type="text"></td>
+            <td class="unit" colspan="6"><input v-model="data.hp.CHP" type="text"></td>
           </tr>
         </table>
       </section>
@@ -665,13 +667,13 @@
             <span>{{skill.skillMod}}</span>
           </td>
           <td>=</td>
-          <td><input :readonly="!skill.classSkill"  v-model="skill.skillRank" type="text"/></td>
+          <td><input v-model="skill.skillRank" type="text"/></td>
           <td>+</td>
           <td>{{data.abilities[skill.keyAbility]?.mod || 0}}</td>
           <td>+</td>
-          <td><input :readonly="!skill.classSkill" v-model="skill.miscMod" type="text"/></td>
+          <td><input v-model="skill.miscMod" type="text"/></td>
           <td>
-            <input :readonly="skill.keyAbility !== 'str' && skill.keyAbility !== 'dex' || !skill.classSkill"
+            <input :readonly="skill.keyAbility !== 'str' && skill.keyAbility !== 'dex'"
                    v-model="skill.penalty"
                    type="text"/>
           </td>

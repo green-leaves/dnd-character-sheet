@@ -93,8 +93,7 @@ const characterData = {
   characterInfo: {
     characterName: '',
     playerName: '',
-    firstClassLevel: '',
-    secondClassLevel: '',
+    class: '',
     alignment: '',
     deities: '',
     age: '',
@@ -167,26 +166,26 @@ export const abilityList = [
 ];
 
 const xpLevels = [
-  { requiredXP: 0, level: 1, nextXP: 300 },
-  { requiredXP: 300, level: 2, nextXP: 900 },
-  { requiredXP: 900, level: 3, nextXP: 2700 },
-  { requiredXP: 2700, level: 4, nextXP: 6500 },
-  { requiredXP: 6500, level: 5, nextXP: 14000 },
-  { requiredXP: 14000, level: 6, nextXP: 23000 },
-  { requiredXP: 23000, level: 7, nextXP: 34000 },
-  { requiredXP: 34000, level: 8, nextXP: 48000 },
-  { requiredXP: 48000, level: 9, nextXP: 64000 },
-  { requiredXP: 64000, level: 10, nextXP: 85000 },
-  { requiredXP: 85000, level: 11, nextXP: 100000 },
-  { requiredXP: 100000, level: 12, nextXP: 120000 },
-  { requiredXP: 120000, level: 13, nextXP: 140000 },
-  { requiredXP: 140000, level: 14, nextXP: 165000 },
-  { requiredXP: 165000, level: 15, nextXP: 195000 },
-  { requiredXP: 195000, level: 16, nextXP: 225000 },
-  { requiredXP: 225000, level: 17, nextXP: 265000 },
-  { requiredXP: 265000, level: 18, nextXP: 305000 },
-  { requiredXP: 305000, level: 19, nextXP: 355000 },
-  { requiredXP: 355000, level: 20, nextXP: Infinity }  // Level 20 is the max level
+  { level: 1, requiredXP: 0, nextXP: 1000 },
+  { level: 2, requiredXP: 1000, nextXP: 3000 },
+  { level: 3, requiredXP: 3000, nextXP: 6000 },
+  { level: 4, requiredXP: 6000, nextXP: 10000 },
+  { level: 5, requiredXP: 10000, nextXP: 15000 },
+  { level: 6, requiredXP: 15000, nextXP: 21000 },
+  { level: 7, requiredXP: 21000, nextXP: 28000 },
+  { level: 8, requiredXP: 28000, nextXP: 36000 },
+  { level: 9, requiredXP: 36000, nextXP: 45000 },
+  { level: 10, requiredXP: 45000, nextXP: 55000 },
+  { level: 11, requiredXP: 55000, nextXP: 66000 },
+  { level: 12, requiredXP: 66000, nextXP: 78000 },
+  { level: 13, requiredXP: 78000, nextXP: 91000 },
+  { level: 14, requiredXP: 91000, nextXP: 105000 },
+  { level: 15, requiredXP: 105000, nextXP: 120000 },
+  { level: 16, requiredXP: 120000, nextXP: 136000 },
+  { level: 17, requiredXP: 136000, nextXP: 153000 },
+  { level: 18, requiredXP: 153000, nextXP: 171000 },
+  { level: 19, requiredXP: 171000, nextXP: 190000 },
+  { level: 20, requiredXP: 190000, nextXP: Infinity }  // Level 20 is the max level
 ];
 
 export const getLevelInfo = (currentXP) => {
