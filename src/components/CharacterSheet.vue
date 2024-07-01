@@ -1,5 +1,6 @@
 <script setup>
   import { reactive, ref, computed } from 'vue';
+  import Mousetrap from 'mousetrap';
   import vueFilePond from "vue-filepond";
   import "filepond/dist/filepond.min.css";
   import { saveAs } from 'file-saver';
@@ -166,6 +167,13 @@
     };
     reader.readAsText(file.file);
   };
+
+  Mousetrap.bind(['command+s', 'ctrl+s'], function() {
+    exportData();
+    // return false to prevent default browser behavior
+    // and stop event from bubbling
+    return false;
+  });
 
   computeData();
 </script>
