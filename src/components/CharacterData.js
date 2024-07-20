@@ -135,6 +135,8 @@ const characterData = {
     total: '',
     misc: ''
   },
+  speed: '',
+  action: '',
   fortitudeSave: savingThrow(),
   reflexSave: savingThrow(),
   willPowerSave: savingThrow(),

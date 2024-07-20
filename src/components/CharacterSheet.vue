@@ -335,14 +335,14 @@
           </tr>
           <tr>
             <td class="tag"><span>Speed</span></td>
-            <td colspan="5" class="unit"><input type="text"></td>
+            <td colspan="5" class="unit"><input v-model="data.speed" type="text"></td>
             <td></td>
             <td class="tag unit round-header" colspan="3">HP</td>
             <td class="unit" colspan="6"><input v-model="data.hp.currentHP" type="text"></td>
           </tr>
           <tr>
             <td class="tag"><span>Action</span></td>
-            <td colspan="5" class="unit"><input type="text"></td>
+            <td colspan="5" class="unit"><input v-model="data.action"  type="text"></td>
             <td></td>
             <td class="tag unit" colspan="3">CHP</td>
             <td class="unit" colspan="6"><input v-model="data.hp.CHP" type="text"></td>
